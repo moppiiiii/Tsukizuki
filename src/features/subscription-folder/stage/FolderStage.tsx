@@ -12,14 +12,30 @@ import {
   type Ref,
 } from 'react'
 import { flushSync } from 'react-dom'
+
 import { artStyle, cardVars, toneOf } from '../art/cardStyle'
 import { useArt } from '../art/useArt'
 import { CardFront } from '../components/CardFront'
 import { FolderBody } from '../components/FolderGraphic'
 import { IconPlus, IconX } from '../components/icons'
-import { cx, prefersReducedMotion, safeInsets, useLatest, wait, type Box } from '../dom'
+import {
+  cx,
+  prefersReducedMotion,
+  safeInsets,
+  useLatest,
+  wait,
+  type Box,
+} from '../dom'
 import { CYCLE_LABEL } from '../model/constants'
-import { diffDays, dueLabel, fullDate, monthlyOf, nextDate, yearlyOf, yen } from '../model/format'
+import {
+  diffDays,
+  dueLabel,
+  fullDate,
+  monthlyOf,
+  nextDate,
+  yearlyOf,
+  yen,
+} from '../model/format'
 import type { Folder, Sub } from '../model/types'
 import { computeGeo, layoutFan, pocket, type Geo, type RestPos } from './layout'
 
@@ -62,7 +78,11 @@ const posStyle = (p: RestPos, z: number): CSSProperties => ({
   scale: '1',
   zIndex: z,
 })
-const restData = (p: RestPos) => ({ 'data-x': p.x, 'data-y': p.y, 'data-r': p.r })
+const restData = (p: RestPos) => ({
+  'data-x': p.x,
+  'data-y': p.y,
+  'data-r': p.r,
+})
 
 export function FolderStage(props: Props) {
   const { folder, subs, initialBox, ref } = props
@@ -74,7 +94,9 @@ export function FolderStage(props: Props) {
   const cardEls = useRef(new Map<string, HTMLElement>())
   const known = useRef<Set<string> | null>(null)
   const opened = useRef(false)
-  const returnTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const returnTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  )
 
   const [box, setBox] = useState(initialBox)
   const [vw, setVw] = useState(() => innerWidth)
@@ -114,7 +136,12 @@ export function FolderStage(props: Props) {
       const r = +(el.dataset.r ?? 0)
       el.animate(
         [
-          { translate: `${pk.x}px ${pk.y}px`, rotate: '0deg', scale: 0.32, easing: 'cubic-bezier(.3,.6,.4,1)' },
+          {
+            translate: `${pk.x}px ${pk.y}px`,
+            rotate: '0deg',
+            scale: 0.32,
+            easing: 'cubic-bezier(.3,.6,.4,1)',
+          },
           {
             translate: `${pk.x + (x - pk.x) * 0.3}px ${-g.H * 0.55}px`,
             rotate: `${r * 0.4}deg`,
@@ -147,7 +174,13 @@ export function FolderStage(props: Props) {
         return el
           .animate(
             [
-              { translate: `${x}px ${y}px`, rotate: `${r}deg`, scale: 1, opacity: 1, easing: 'cubic-bezier(.5,0,.7,.4)' },
+              {
+                translate: `${x}px ${y}px`,
+                rotate: `${r}deg`,
+                scale: 1,
+                opacity: 1,
+                easing: 'cubic-bezier(.5,0,.7,.4)',
+              },
               {
                 translate: `${pk.x + (x - pk.x) * 0.3}px ${-g.H * 0.55}px`,
                 rotate: `${r * 0.4}deg`,
@@ -156,7 +189,12 @@ export function FolderStage(props: Props) {
                 offset: 0.5,
                 easing: 'ease-in',
               },
-              { translate: `${pk.x}px ${pk.y}px`, rotate: '0deg', scale: 0.32, opacity: 1 },
+              {
+                translate: `${pk.x}px ${pk.y}px`,
+                rotate: '0deg',
+                scale: 0.32,
+                opacity: 1,
+              },
             ],
             { duration: 440, delay: (n - 1 - i) * stag, fill: 'forwards' },
           )
@@ -175,10 +213,17 @@ export function FolderStage(props: Props) {
     setActive(true)
     setPeekHidden(true)
     if (!prefersReducedMotion()) {
-      sf.animate([{ transform: 'scale(1)' }, { transform: 'scale(.96)', offset: 0.35 }, { transform: 'scale(1)' }], {
-        duration: 440,
-        easing: 'cubic-bezier(.3,1.4,.5,1)',
-      })
+      sf.animate(
+        [
+          { transform: 'scale(1)' },
+          { transform: 'scale(.96)', offset: 0.35 },
+          { transform: 'scale(1)' },
+        ],
+        {
+          duration: 440,
+          easing: 'cubic-bezier(.3,1.4,.5,1)',
+        },
+      )
     }
     closeRef.current?.focus({ preventScroll: true })
   }, [])
@@ -191,7 +236,9 @@ export function FolderStage(props: Props) {
     const prev = known.current ?? new Set<string>()
     const fresh = ids.filter((id) => !prev.has(id))
     known.current = new Set(ids)
-    const els = fresh.map((id) => cardEls.current.get(id)).filter((el): el is HTMLElement => !!el)
+    const els = fresh
+      .map((id) => cardEls.current.get(id))
+      .filter((el): el is HTMLElement => !!el)
     emerge(els, first ? 40 : 0, box, geo)
     // ids は idsKey で比較している
   }, [idsKey])
@@ -207,7 +254,10 @@ export function FolderStage(props: Props) {
       setReturning(null)
     } else {
       setReturning(cur.id)
-      returnTimer.current = setTimeout(() => setReturning((r) => (r === cur.id ? null : r)), 560)
+      returnTimer.current = setTimeout(
+        () => setReturning((r) => (r === cur.id ? null : r)),
+        560,
+      )
     }
   }
 
@@ -216,12 +266,21 @@ export function FolderStage(props: Props) {
     const ins = safeInsets()
     const top = 16 + ins.top
     const bottom = innerHeight - 16 - ins.bottom
-    const k = Math.max(1, Math.min(Math.min(360, innerWidth * 0.86) / geo.W, ((bottom - top) * 0.62) / geo.H))
+    const k = Math.max(
+      1,
+      Math.min(
+        Math.min(360, innerWidth * 0.86) / geo.W,
+        ((bottom - top) * 0.62) / geo.H,
+      ),
+    )
     const cy = top + (bottom - top) * 0.46
     clearTimeout(returnTimer.current)
     setReturning(prev && prev.id !== id ? prev.id : null)
     if (prev && prev.id !== id) {
-      returnTimer.current = setTimeout(() => setReturning((r) => (r === prev.id ? null : r)), 560)
+      returnTimer.current = setTimeout(
+        () => setReturning((r) => (r === prev.id ? null : r)),
+        560,
+      )
     }
     setFlipped(null)
     setFocus({
@@ -237,13 +296,18 @@ export function FolderStage(props: Props) {
     if (on) {
       setFlipped(id)
       setTimeout(
-        () => el?.querySelector<HTMLButtonElement>('[data-act="edit"]')?.focus({ preventScroll: true }),
+        () =>
+          el
+            ?.querySelector<HTMLButtonElement>('[data-act="edit"]')
+            ?.focus({ preventScroll: true }),
         prefersReducedMotion() ? 0 : 280,
       )
     } else {
       // 表面の inert を外してからフォーカスを戻す
       flushSync(() => setFlipped(null))
-      el?.querySelector<HTMLButtonElement>('.front')?.focus({ preventScroll: true })
+      el?.querySelector<HTMLButtonElement>('.front')?.focus({
+        preventScroll: true,
+      })
     }
   }
 
@@ -252,11 +316,17 @@ export function FolderStage(props: Props) {
     if (el && !prefersReducedMotion()) {
       const k = parseFloat(el.style.scale) || 1
       await el
-        .animate([{ opacity: 1, scale: k }, { opacity: 0, scale: k * 0.85 }], {
-          duration: 220,
-          easing: 'ease-in',
-          fill: 'forwards',
-        })
+        .animate(
+          [
+            { opacity: 1, scale: k },
+            { opacity: 0, scale: k * 0.85 },
+          ],
+          {
+            duration: 220,
+            easing: 'ease-in',
+            fill: 'forwards',
+          },
+        )
         .finished.catch(() => {})
     }
     latest.current.onDelete(id)
@@ -273,7 +343,11 @@ export function FolderStage(props: Props) {
     else if (t.closest('.back')) flip(id, false)
   }
 
-  const onAction = (e: MouseEvent, act: 'unflip' | 'edit' | 'delete', sub: Sub) => {
+  const onAction = (
+    e: MouseEvent,
+    act: 'unflip' | 'edit' | 'delete',
+    sub: Sub,
+  ) => {
     e.stopPropagation()
     if (props.isBusy()) return
     if (act === 'unflip') flip(sub.id, false)
@@ -299,7 +373,10 @@ export function FolderStage(props: Props) {
       const el = stageRef.current
       if (!el || prefersReducedMotion()) return
       await el
-        .animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' })
+        .animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 220,
+          fill: 'forwards',
+        })
         .finished.catch(() => {})
     },
   }))
@@ -343,6 +420,7 @@ export function FolderStage(props: Props) {
 
   return (
     <div className="stage" ref={stageRef}>
+      {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 背景のクリックで閉じるための処理。キーボードでは Esc で閉じられる（上の keydown の処理） */}
       <div
         className={cx('dim', focus && 'veil')}
         onClick={(e) => {
@@ -354,13 +432,23 @@ export function FolderStage(props: Props) {
       <div
         className={cx('sf', active && 'active')}
         ref={sfRef}
-        style={{ left: box.left, top: box.top, width: box.width, height: box.height, '--fc': folder.color } as CSSProperties}
+        style={
+          {
+            left: box.left,
+            top: box.top,
+            width: box.width,
+            height: box.height,
+            '--fc': folder.color,
+          } as CSSProperties
+        }
       >
         <FolderBody name={folder.name} subs={subs} peekHidden={peekHidden} />
         <div
           className={cx('fan', focus && 'has-focus')}
           ref={fanRef}
-          style={{ '--cw': `${geo.W}px`, '--ch': `${geo.H}px` } as CSSProperties}
+          style={
+            { '--cw': `${geo.W}px`, '--ch': `${geo.H}px` } as CSSProperties
+          }
         >
           {subs.map((s, i) => (
             <FanCard
@@ -424,15 +512,31 @@ type CardProps = {
   onAction: (e: MouseEvent, act: 'unflip' | 'edit' | 'delete') => void
 }
 
-function FanCard({ sub: s, rest, z, focus, flipped, lifted, cardRef, onClick, onAction }: CardProps) {
+function FanCard({
+  sub: s,
+  rest,
+  z,
+  focus,
+  flipped,
+  lifted,
+  cardRef,
+  onClick,
+  onAction,
+}: CardProps) {
   const url = useArt(s.design, s.color, s.seed, 'l')
   const nd = nextDate(s)
   const label = `${s.name}, ${yen(s.price)} ${CYCLE_LABEL[s.cycle].toLowerCase()}, next payment ${fullDate(nd)}`
   const place: CSSProperties = focus
-    ? { translate: `${focus.x}px ${focus.y}px`, rotate: '0deg', scale: focus.k.toFixed(3), zIndex: 300 }
+    ? {
+        translate: `${focus.x}px ${focus.y}px`,
+        rotate: '0deg',
+        scale: focus.k.toFixed(3),
+        zIndex: 300,
+      }
     : posStyle(rest, lifted ? 300 : z)
 
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 中のボタン（表面と、裏面の Back・Edit・Delete）から伝わるクリックを受ける。キーボードではそのボタンで操作できる
     <div
       className={cx('fcard', focus && 'focused', flipped && 'flipped')}
       ref={cardRef}
@@ -441,10 +545,20 @@ function FanCard({ sub: s, rest, z, focus, flipped, lifted, cardRef, onClick, on
       onClick={onClick}
     >
       <div className="fc-inner">
-        <button className="face front" type="button" style={artStyle(s.color, url)} aria-label={label} inert={flipped}>
+        <button
+          className="face front"
+          type="button"
+          style={artStyle(s.color, url)}
+          aria-label={label}
+          inert={flipped}
+        >
           <CardFront name={s.name} price={s.price} cycle={s.cycle} next={nd} />
         </button>
-        <div className="face back" style={artStyle(s.color, url, toneOf(s.design, s.color))} inert={!flipped}>
+        <div
+          className="face back"
+          style={artStyle(s.color, url, toneOf(s.design, s.color))}
+          inert={!flipped}
+        >
           <span className="stripe" aria-hidden="true" />
           <div className="b-body">
             <p className="b-line">
@@ -461,13 +575,25 @@ function FanCard({ sub: s, rest, z, focus, flipped, lifted, cardRef, onClick, on
             {s.memo && <p className="b-memo">{s.memo}</p>}
           </div>
           <div className="b-actions">
-            <button type="button" data-act="unflip" onClick={(e) => onAction(e, 'unflip')}>
+            <button
+              type="button"
+              data-act="unflip"
+              onClick={(e) => onAction(e, 'unflip')}
+            >
               Flip back
             </button>
-            <button type="button" data-act="edit" onClick={(e) => onAction(e, 'edit')}>
+            <button
+              type="button"
+              data-act="edit"
+              onClick={(e) => onAction(e, 'edit')}
+            >
               Edit
             </button>
-            <button type="button" data-act="delete" onClick={(e) => onAction(e, 'delete')}>
+            <button
+              type="button"
+              data-act="delete"
+              onClick={(e) => onAction(e, 'delete')}
+            >
               Delete
             </button>
           </div>

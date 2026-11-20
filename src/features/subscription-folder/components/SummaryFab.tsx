@@ -2,8 +2,17 @@
 // 毎月・1年の支払い合計と次の支払いを動き付きで出す。
 // 丸は画面中央から左にずらして置き（右隣は ＋ ボタン）、パネルは画面中央に広がる。
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+
 import { cx, prefersReducedMotion } from '../dom'
-import { diffDays, dueLabel, monthlyOf, nextDate, shortDate, yearlyOf, yen } from '../model/format'
+import {
+  diffDays,
+  dueLabel,
+  monthlyOf,
+  nextDate,
+  shortDate,
+  yearlyOf,
+  yen,
+} from '../model/format'
 import type { Sub } from '../model/types'
 
 type Props = {
@@ -19,7 +28,9 @@ export function SummaryFab({ subs, hidden }: Props) {
   const [pinned, setPinned] = useState(false)
   const open = !hidden && (hover || pinned)
   // 隣の ＋ へ向かう途中でかすっただけでは開かないよう、少し留まってから開く
-  const hoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  )
   const enter = () => {
     clearTimeout(hoverTimer.current)
     hoverTimer.current = setTimeout(() => setHover(true), 140)
@@ -30,10 +41,17 @@ export function SummaryFab({ subs, hidden }: Props) {
   }
   useEffect(() => () => clearTimeout(hoverTimer.current), [])
 
+  // フォルダを開いて隠れるときは、描画の途中でパネルを閉じた状態に戻す
+  const [wasHidden, setWasHidden] = useState(hidden)
+  if (hidden !== wasHidden) {
+    setWasHidden(hidden)
+    if (hidden) {
+      setHover(false)
+      setPinned(false)
+    }
+  }
   useEffect(() => {
-    if (!hidden) return
-    leave()
-    setPinned(false)
+    if (hidden) clearTimeout(hoverTimer.current)
   }, [hidden])
 
   // 開いたままのときは、外側のタップか Esc で閉じる
@@ -114,7 +132,9 @@ export function SummaryFab({ subs, hidden }: Props) {
           aria-controls="fab-body"
           aria-label={open ? 'Hide payment summary' : 'Show payment summary'}
           onClick={() => setPinned((p) => !p)}
-          onFocus={(e) => e.currentTarget.matches(':focus-visible') && setHover(true)}
+          onFocus={(e) =>
+            e.currentTarget.matches(':focus-visible') && setHover(true)
+          }
           onBlur={() => setHover(false)}
         />
       </div>
@@ -125,11 +145,9 @@ export function SummaryFab({ subs, hidden }: Props) {
 /** 開いたときに 0 から目標の金額まで数え上げる */
 function useCountUp(target: number, run: boolean): number {
   const [value, setValue] = useState(target)
+  const animate = run && !prefersReducedMotion()
   useEffect(() => {
-    if (!run || prefersReducedMotion()) {
-      setValue(target)
-      return
-    }
+    if (!animate) return
     // パネルが広がり始めてから数え始める
     const start = performance.now() + 120
     const dur = 720
@@ -141,18 +159,24 @@ function useCountUp(target: number, run: boolean): number {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [target, run])
-  return value
+  }, [target, animate])
+  // 数え上げないときは、目標の金額をそのまま出す
+  return animate ? value : target
 }
 
 /** 次に支払うサブスク。同じ日に複数あれば「+◯ more」とまとめる */
 function nextPayment(subs: Sub[]) {
   if (!subs.length) return null
-  const list = subs.map((s) => ({ s, d: nextDate(s) })).sort((a, b) => a.d.getTime() - b.d.getTime())
+  const list = subs
+    .map((s) => ({ s, d: nextDate(s) }))
+    .sort((a, b) => a.d.getTime() - b.d.getTime())
   const first = list[0]
   const same = list.filter((x) => x.d.getTime() === first.d.getTime())
   return {
-    name: same.length > 1 ? `${first.s.name} +${same.length - 1} more` : first.s.name,
+    name:
+      same.length > 1
+        ? `${first.s.name} +${same.length - 1} more`
+        : first.s.name,
     amount: yen(same.reduce((a, x) => a + x.s.price, 0)),
     date: shortDate(first.d),
     due: dueLabel(diffDays(first.d)),

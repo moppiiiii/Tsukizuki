@@ -10,7 +10,12 @@
     "generate-routes": "vite build",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "bun run build && wrangler deploy"
+    "deploy": "bun run build && wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -29,6 +34,8 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "wrangler": "^4.70.0"

@@ -12,7 +12,8 @@ export function computeGeo(vw: number): Geo {
 }
 
 /** カードを広げるのにフォルダの上に必要な高さ */
-export const fanRoomAbove = (n: number, geo: Geo) => geo.H + 26 + (n > 6 ? geo.H * 0.72 : 0)
+export const fanRoomAbove = (n: number, geo: Geo) =>
+  geo.H + 26 + (n > 6 ? geo.H * 0.72 : 0)
 
 /** カードが出入りする位置（フォルダのポケット） */
 export const pocket = (box: Box, geo: Geo) => ({
@@ -24,7 +25,12 @@ export const pocket = (box: Box, geo: Geo) => ({
  * n 枚のカードの静止位置。7 枚以上は 2 段にする。
  * 画面幅に収まらないときはカードどうしの角度を詰め、扇の中心を画面内に寄せる。
  */
-export function layoutFan(n: number, box: Box, geo: Geo, vw: number): RestPos[] {
+export function layoutFan(
+  n: number,
+  box: Box,
+  geo: Geo,
+  vw: number,
+): RestPos[] {
   const out: RestPos[] = []
   if (!n) return out
   const { W, H } = geo
@@ -38,13 +44,25 @@ export function layoutFan(n: number, box: Box, geo: Geo, vw: number): RestPos[] 
     const R = R0 + lift
     let step = cnt > 1 ? (13 * Math.PI) / 180 : 0
     if (cnt > 1 && R * Math.sin((step * (cnt - 1)) / 2) > maxHalf - W * 0.6) {
-      step = (2 * Math.asin(Math.min(0.98, Math.max(0.02, (maxHalf - W * 0.6) / R)))) / (cnt - 1)
+      step =
+        (2 *
+          Math.asin(Math.min(0.98, Math.max(0.02, (maxHalf - W * 0.6) / R)))) /
+        (cnt - 1)
     }
-    return { cnt, lift, R, step, half: R * Math.sin((step * (cnt - 1)) / 2) + W * 0.6 }
+    return {
+      cnt,
+      lift,
+      R,
+      step,
+      half: R * Math.sin((step * (cnt - 1)) / 2) + W * 0.6,
+    }
   })
   const half = Math.max(...rowsGeo.map((g) => g.half))
   const folderCx = box.left + box.width / 2
-  const fanCx = half * 2 >= vw - 28 ? vw / 2 : Math.min(Math.max(folderCx, half + 14), vw - half - 14)
+  const fanCx =
+    half * 2 >= vw - 28
+      ? vw / 2
+      : Math.min(Math.max(folderCx, half + 14), vw - half - 14)
   const offX = fanCx - folderCx
   let idx = 0
   rowsGeo.forEach((g) => {
@@ -54,7 +72,8 @@ export function layoutFan(n: number, box: Box, geo: Geo, vw: number): RestPos[] 
       const a = start + g.step * j
       // 手で並べたような小さなずれ
       const jitter = ((idx * 53) % 7) - 3
-      const cx = box.width / 2 + offX + g.R * Math.sin(a) + (((idx * 31) % 5) - 2) * 3
+      const cx =
+        box.width / 2 + offX + g.R * Math.sin(a) + (((idx * 31) % 5) - 2) * 3
       const cy = py - g.R * Math.cos(a) + (((idx * 29) % 5) - 2) * 3
       out.push({
         x: Math.round(cx - W / 2),

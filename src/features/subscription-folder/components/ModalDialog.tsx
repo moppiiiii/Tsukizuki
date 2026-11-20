@@ -1,5 +1,6 @@
 // <dialog> をモーダルで開閉する。開くときと閉じるときにフェードとスライドをつける
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+
 import { dialogCloseMs, useLatest } from '../dom'
 
 type Props = {
@@ -10,11 +11,19 @@ type Props = {
   children: ReactNode
 }
 
-export function ModalDialog({ open, onRequestClose, labelledBy, children }: Props) {
+export function ModalDialog({
+  open,
+  onRequestClose,
+  labelledBy,
+  children,
+}: Props) {
   const ref = useRef<HTMLDialogElement>(null)
   const [shown, setShown] = useState(false)
   const close = useLatest(onRequestClose)
   const isOpen = useLatest(open)
+
+  // 閉じるときは、描画の途中で .in を外して閉じるアニメーションを始める
+  if (!open && shown) setShown(false)
 
   useEffect(() => {
     const d = ref.current
@@ -31,7 +40,6 @@ export function ModalDialog({ open, onRequestClose, labelledBy, children }: Prop
         cancelAnimationFrame(r2)
       }
     }
-    setShown(false)
     if (!d.open) return
     const t = setTimeout(() => {
       if (d.open) d.close()
@@ -59,6 +67,7 @@ export function ModalDialog({ open, onRequestClose, labelledBy, children }: Prop
   }, [close, isOpen])
 
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- 背景のクリックで閉じるための処理。キーボードでは Esc（cancel イベント）と data-close のボタンで閉じられる
     <dialog
       ref={ref}
       className={shown ? 'in' : undefined}

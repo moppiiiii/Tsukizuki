@@ -1,21 +1,39 @@
 // サブスクフォルダの画面全体。画面にはフォルダだけを並べる。
 // データを持ち、フォルダの開閉・ダイアログ・通知をまとめる。
 // データはこの端末のブラウザ（localStorage）に保存する。初めて開いたときは空の状態で始まる。
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+
 import { AddFolderFab } from './components/AddFolderFab'
-import { FolderDialog, type FolderDialogRequest } from './components/FolderDialog'
+import {
+  FolderDialog,
+  type FolderDialogRequest,
+} from './components/FolderDialog'
 import { FolderTile } from './components/FolderGraphic'
-import { SubDialog, type SubDialogRequest, type SubFormValues } from './components/SubDialog'
+import {
+  SubDialog,
+  type SubDialogRequest,
+  type SubFormValues,
+} from './components/SubDialog'
 import { SummaryFab } from './components/SummaryFab'
 import { Toast, type ToastMessage } from './components/Toast'
-import { boxOf, dialogCloseMs, ensureRoom, lockScroll, popIn, useLatest, wait, type Box } from './dom'
+import {
+  boxOf,
+  dialogCloseMs,
+  ensureRoom,
+  lockScroll,
+  popIn,
+  useLatest,
+  wait,
+  type Box,
+} from './dom'
 import { FOLDER_COLORS, UNSORTED, leastUsed } from './model/constants'
 import { sortByNext, uid } from './model/format'
 import { loadData, saveData } from './model/storage'
 import type { AppData, Folder, Sub } from './model/types'
 import { FolderStage, type StageHandle } from './stage/FolderStage'
 import { computeGeo, fanRoomAbove } from './stage/layout'
+
 import './subscription-folder.css'
 
 const EMPTY: Sub[] = []
@@ -35,7 +53,9 @@ export function SubscriptionFolderApp() {
 
   const byFolder = useMemo(() => {
     const m = new Map<string, Sub[]>()
-    data.folders.forEach((f) => m.set(f.id, sortByNext(data.subs.filter((s) => s.folderId === f.id))))
+    data.folders.forEach((f) =>
+      m.set(f.id, sortByNext(data.subs.filter((s) => s.folderId === f.id))),
+    )
     return m
   }, [data])
   const byFolderRef = useLatest(byFolder)
@@ -55,13 +75,20 @@ export function SubscriptionFolderApp() {
   }
 
   // 開いているフォルダが「元に戻す」などで消えたときは、消える直前の中身のままフェードアウトさせる
-  const openFolder = openId ? data.folders.find((f) => f.id === openId) : undefined
-  const stageContent = openFolder ? { folder: openFolder, subs: byFolder.get(openFolder.id) ?? EMPTY } : null
-  const lastStage = useRef(stageContent)
-  useLayoutEffect(() => {
-    if (stageContent) lastStage.current = stageContent
-  })
-  const shownStage = stageContent ?? (openId ? lastStage.current : null)
+  const openFolder = openId
+    ? data.folders.find((f) => f.id === openId)
+    : undefined
+  const stageContent = useMemo(
+    () =>
+      openFolder
+        ? { folder: openFolder, subs: byFolder.get(openFolder.id) ?? EMPTY }
+        : null,
+    [openFolder, byFolder],
+  )
+  // 最後に出していた中身を、描画の途中で覚え直す
+  const [lastStage, setLastStage] = useState(stageContent)
+  if (stageContent && stageContent !== lastStage) setLastStage(stageContent)
+  const shownStage = stageContent ?? (openId ? lastStage : null)
 
   // ---- ダイアログと通知 ----
   const seq = useRef(0)
@@ -70,7 +97,8 @@ export function SubscriptionFolderApp() {
   const [folderOpen, setFolderOpen] = useState(false)
   const [folderReq, setFolderReq] = useState<FolderDialogRequest | null>(null)
   const [toastMsg, setToastMsg] = useState<ToastMessage | null>(null)
-  const toast = (text: string, undo?: () => void) => setToastMsg({ token: ++seq.current, text, undo })
+  const toast = (text: string, undo?: () => void) =>
+    setToastMsg({ token: ++seq.current, text, undo })
 
   // ---- フォルダの開閉 ----
   async function openFolderById(id: string) {
@@ -95,7 +123,10 @@ export function SubscriptionFolderApp() {
     })
     lockScroll(false)
     if (restoreFocus && id) {
-      folderEls.current.get(id)?.querySelector<HTMLButtonElement>('.f-hit')?.focus({ preventScroll: true })
+      folderEls.current
+        .get(id)
+        ?.querySelector<HTMLButtonElement>('.f-hit')
+        ?.focus({ preventScroll: true })
     }
     anim.current = false
   }
@@ -150,7 +181,11 @@ export function SubscriptionFolderApp() {
     let folders = cur.folders
     let folderId = v.folderId
     if (!folders.some((f) => f.id === folderId)) {
-      const nf: Folder = { id: uid(), name: UNSORTED.name, color: UNSORTED.color }
+      const nf: Folder = {
+        id: uid(),
+        name: UNSORTED.name,
+        color: UNSORTED.color,
+      }
       folders = [...folders, nf]
       folderId = nf.id
     }
@@ -159,7 +194,9 @@ export function SubscriptionFolderApp() {
     let newId: string | null = null
     let subs: Sub[]
     if (ex) {
-      subs = cur.subs.map((s) => (s.id === ex.id ? { ...s, ...fields, folderId } : s))
+      subs = cur.subs.map((s) =>
+        s.id === ex.id ? { ...s, ...fields, folderId } : s,
+      )
     } else {
       newId = uid()
       subs = [...cur.subs, { ...fields, id: newId, folderId }]
@@ -168,8 +205,11 @@ export function SubscriptionFolderApp() {
 
     // 開いているフォルダとは別のフォルダに入れたときは、どこに入れたかを知らせる
     if ((ex && ex.folderId !== folderId) || (newId && folderId !== stageId)) {
-      const where = folders.find((x) => x.id === folderId)?.name ?? UNSORTED.name
-      toast(ex ? `Moved “${v.name}” to ${where}` : `Added “${v.name}” to ${where}`)
+      const where =
+        folders.find((x) => x.id === folderId)?.name ?? UNSORTED.name
+      toast(
+        ex ? `Moved “${v.name}” to ${where}` : `Added “${v.name}” to ${where}`,
+      )
     }
   }
 
@@ -183,7 +223,9 @@ export function SubscriptionFolderApp() {
 
   // ---- フォルダの作成・編集・削除 ----
   function openFolderDialog(folder: Folder | null) {
-    const subCount = folder ? dataRef.current.subs.filter((s) => s.folderId === folder.id).length : 0
+    const subCount = folder
+      ? dataRef.current.subs.filter((s) => s.folderId === folder.id).length
+      : 0
     setFolderReq({ token: ++seq.current, folder, subCount })
     setFolderOpen(true)
   }
@@ -194,7 +236,12 @@ export function SubscriptionFolderApp() {
     await wait(dialogCloseMs())
     const cur = dataRef.current
     if (target && cur.folders.some((f) => f.id === target.id)) {
-      setData({ ...cur, folders: cur.folders.map((f) => (f.id === target.id ? { ...f, name } : f)) })
+      setData({
+        ...cur,
+        folders: cur.folders.map((f) =>
+          f.id === target.id ? { ...f, name } : f,
+        ),
+      })
       return
     }
     const color = leastUsed(
@@ -227,7 +274,9 @@ export function SubscriptionFolderApp() {
         <h1 className="sr-only">Subscription Folders</h1>
         <main className="grid">
           {/* フォルダが無いときだけ、画面中央に一行の案内を出す */}
-          {!data.folders.length && <p className="empty">Press + to create your first folder.</p>}
+          {!data.folders.length && (
+            <p className="empty">Press + to create your first folder.</p>
+          )}
           {data.folders.map((f) => (
             <FolderTile
               key={f.id}
@@ -253,7 +302,9 @@ export function SubscriptionFolderApp() {
           subs={shownStage.subs}
           initialBox={stageBox}
           getSourceBox={() => {
-            const el = openRef.current ? folderEls.current.get(openRef.current) : undefined
+            const el = openRef.current
+              ? folderEls.current.get(openRef.current)
+              : undefined
             return el ? boxOf(el) : null
           }}
           isBusy={isBusy}

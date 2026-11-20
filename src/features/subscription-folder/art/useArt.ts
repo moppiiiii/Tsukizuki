@@ -1,7 +1,16 @@
 // カードの柄を画像（JPEG の data URL）にして使い回す。
 // 描画は重いので、1 回 22ms までに区切って少しずつ描き、描けたものから表示する。
 import { useCallback, useSyncExternalStore } from 'react'
-import { ctx2d, hashStr, makeCanvas, matte, noiseOf, rgbHsl, rngOf } from './canvas'
+
+import {
+  ctx2d,
+  hashStr,
+  makeCanvas,
+  matte,
+  noiseOf,
+  rgbHsl,
+  rngOf,
+} from './canvas'
 import { hexRgb } from './color'
 import { DESIGN_MAP, DESIGNS } from './designs'
 
@@ -16,7 +25,8 @@ const queue = new Map<string, ArtArgs>()
 const listeners = new Map<string, Set<() => void>>()
 let timer: ReturnType<typeof setTimeout> | null = null
 
-const artKey = (...[design, color, seed, size]: ArtArgs) => `${design}|${color}|${seed}|${size}`
+const artKey = (...[design, color, seed, size]: ArtArgs) =>
+  `${design}|${color}|${seed}|${size}`
 
 function renderArt(...[design, color, seed, size]: ArtArgs): string {
   const [w, h] = ART_SIZE[size]
@@ -56,7 +66,12 @@ function request(args: ArtArgs) {
 }
 
 /** 柄の画像 URL を返す。まだ描けていなければ '' を返し、描けたら再描画される */
-export function useArt(design: string, color: string, seed: number, size: ArtSize): string {
+export function useArt(
+  design: string,
+  color: string,
+  seed: number,
+  size: ArtSize,
+): string {
   const key = artKey(design, color, seed, size)
   const subscribe = useCallback(
     (cb: () => void) => {

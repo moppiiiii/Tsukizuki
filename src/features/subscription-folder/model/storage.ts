@@ -5,8 +5,10 @@ import type { AppData, Folder, Sub } from './types'
 const KEY = 'tsukizuki:data:v1'
 
 const isStr = (v: unknown): v is string => typeof v === 'string'
-const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
-const isHex = (v: unknown): v is string => isStr(v) && /^#[0-9a-fA-F]{6}$/.test(v)
+const isNum = (v: unknown): v is number =>
+  typeof v === 'number' && Number.isFinite(v)
+const isHex = (v: unknown): v is string =>
+  isStr(v) && /^#[0-9a-fA-F]{6}$/.test(v)
 
 function toFolder(v: unknown): Folder | null {
   const o = v as Partial<Folder> | null
@@ -16,8 +18,22 @@ function toFolder(v: unknown): Folder | null {
 
 function toSub(v: unknown): Sub | null {
   const o = v as Partial<Sub> | null
-  if (!o || !isStr(o.id) || !isStr(o.name) || !isNum(o.price) || !CYCLES.includes(o.cycle as Sub['cycle'])) return null
-  if (!isStr(o.next) || !isStr(o.folderId) || !isHex(o.color) || !isStr(o.design) || !isNum(o.seed)) return null
+  if (
+    !o ||
+    !isStr(o.id) ||
+    !isStr(o.name) ||
+    !isNum(o.price) ||
+    !CYCLES.includes(o.cycle as Sub['cycle'])
+  )
+    return null
+  if (
+    !isStr(o.next) ||
+    !isStr(o.folderId) ||
+    !isHex(o.color) ||
+    !isStr(o.design) ||
+    !isNum(o.seed)
+  )
+    return null
   return {
     id: o.id,
     name: o.name,
@@ -38,8 +54,12 @@ export function loadData(): AppData {
     const raw = localStorage.getItem(KEY)
     const o = raw ? (JSON.parse(raw) as Partial<AppData>) : null
     return {
-      folders: Array.isArray(o?.folders) ? o.folders.map(toFolder).filter((f) => f !== null) : [],
-      subs: Array.isArray(o?.subs) ? o.subs.map(toSub).filter((s) => s !== null) : [],
+      folders: Array.isArray(o?.folders)
+        ? o.folders.map(toFolder).filter((f) => f !== null)
+        : [],
+      subs: Array.isArray(o?.subs)
+        ? o.subs.map(toSub).filter((s) => s !== null)
+        : [],
     }
   } catch {
     return { folders: [], subs: [] }

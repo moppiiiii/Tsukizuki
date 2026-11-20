@@ -2,10 +2,24 @@
 import type { Sub } from './types'
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MON = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
 const DAY = 864e5
 
-export const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-5)
+export const uid = () =>
+  Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-5)
 export const yen = (n: number) => '¥' + Math.round(n).toLocaleString('en-US')
 
 export function todayD(): Date {
@@ -47,7 +61,9 @@ export function nextDate(s: Pick<Sub, 'next' | 'cycle'>): Date {
     return addDays(base, Math.ceil(diff / 7) * 7)
   }
   const step = s.cycle === 'year' ? 12 : 1
-  const months = (t.getFullYear() - base.getFullYear()) * 12 + (t.getMonth() - base.getMonth())
+  const months =
+    (t.getFullYear() - base.getFullYear()) * 12 +
+    (t.getMonth() - base.getMonth())
   let k = Math.max(1, Math.floor(months / step))
   let d = addMonthsClamp(base, k * step, base.getDate())
   for (let g = 0; d.getTime() < t.getTime() && g < 5; g++) {
@@ -57,20 +73,31 @@ export function nextDate(s: Pick<Sub, 'next' | 'cycle'>): Date {
   return d
 }
 
-export const diffDays = (d: Date) => Math.round((d.getTime() - todayD().getTime()) / DAY)
+export const diffDays = (d: Date) =>
+  Math.round((d.getTime() - todayD().getTime()) / DAY)
 /** 例：Mon, Nov 23 */
-export const fullDate = (d: Date) => `${DOW[d.getDay()]}, ${MON[d.getMonth()]} ${d.getDate()}`
+export const fullDate = (d: Date) =>
+  `${DOW[d.getDay()]}, ${MON[d.getMonth()]} ${d.getDate()}`
 /** 例：Nov 23 */
 export const shortDate = (d: Date) => `${MON[d.getMonth()]} ${d.getDate()}`
-export const dueLabel = (n: number) => (n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `in ${n} days`)
+export const dueLabel = (n: number) =>
+  n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `in ${n} days`
 /** 例：1 card / 3 cards */
 export const cardCount = (n: number) => `${n} ${n === 1 ? 'card' : 'cards'}`
 
 type Priced = Pick<Sub, 'cycle' | 'price'>
 export const monthlyOf = (s: Priced) =>
-  s.cycle === 'year' ? s.price / 12 : s.cycle === 'week' ? (s.price * 52) / 12 : s.price
+  s.cycle === 'year'
+    ? s.price / 12
+    : s.cycle === 'week'
+      ? (s.price * 52) / 12
+      : s.price
 export const yearlyOf = (s: Priced) =>
-  s.cycle === 'year' ? s.price : s.cycle === 'week' ? s.price * 52 : s.price * 12
+  s.cycle === 'year'
+    ? s.price
+    : s.cycle === 'week'
+      ? s.price * 52
+      : s.price * 12
 
 /** 金額の入力を数値にする。カンマ・「¥」のほか、日本語入力の全角数字・「円」も許す。読めなければ null */
 export function parsePrice(v: string): number | null {

@@ -1,8 +1,8 @@
+import { cx } from '../dom'
 // カード表面の中身（サービス名・周期・金額・次の支払日）
 import { CYCLE_LABEL } from '../model/constants'
 import { diffDays, dueLabel, shortDate, yen } from '../model/format'
 import type { Cycle } from '../model/types'
-import { cx } from '../dom'
 
 type Props = {
   name: string

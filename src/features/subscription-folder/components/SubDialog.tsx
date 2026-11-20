@@ -1,9 +1,22 @@
 // サブスクの追加・編集ダイアログ
-import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from 'react'
+
 import { artStyle, cardVars } from '../art/cardStyle'
 import { DESIGNS } from '../art/designs'
 import { useArt } from '../art/useArt'
-import { CARD_COLORS, CYCLE_LABEL, CYCLES, UNSORTED, leastUsed } from '../model/constants'
+import {
+  CARD_COLORS,
+  CYCLE_LABEL,
+  CYCLES,
+  UNSORTED,
+  leastUsed,
+} from '../model/constants'
 import { nextDate, parsePrice, parseYMD, todayD, ymd } from '../model/format'
 import type { Cycle, Folder, Sub } from '../model/types'
 import { CardFront } from './CardFront'
@@ -30,10 +43,25 @@ type Props = {
   onSubmit: (values: SubFormValues) => void
 }
 
-export function SubDialog({ open, request, folders, subs, onCancel, onSubmit }: Props) {
+export function SubDialog({
+  open,
+  request,
+  folders,
+  subs,
+  onCancel,
+  onSubmit,
+}: Props) {
   return (
     <ModalDialog open={open} onRequestClose={onCancel} labelledBy="subTitle">
-      {request && <SubForm key={request.token} request={request} folders={folders} subs={subs} onSubmit={onSubmit} />}
+      {request && (
+        <SubForm
+          key={request.token}
+          request={request}
+          folders={folders}
+          subs={subs}
+          onSubmit={onSubmit}
+        />
+      )}
     </ModalDialog>
   )
 }
@@ -58,7 +86,9 @@ function SubForm({
   const [cycle, setCycle] = useState<Cycle>(sub?.cycle ?? 'month')
   const [next, setNext] = useState(() => ymd(sub ? nextDate(sub) : todayD()))
   const [folderId, setFolderId] = useState(
-    folders.some((f) => f.id === initialFolder) ? (initialFolder as string) : (folders[0]?.id ?? ''),
+    folders.some((f) => f.id === initialFolder)
+      ? (initialFolder as string)
+      : (folders[0]?.id ?? ''),
   )
   const [color, setColor] = useState(
     () =>
@@ -130,18 +160,35 @@ function SubForm({
       <div
         className="fcard preview"
         aria-hidden="true"
-        style={{ '--cw': '240px', '--ch': '151px', ...cardVars(color, design) } as CSSProperties}
+        style={
+          {
+            '--cw': '240px',
+            '--ch': '151px',
+            ...cardVars(color, design),
+          } as CSSProperties
+        }
       >
         <div className="fc-inner">
           <div className="face front" style={artStyle(color, previewUrl)}>
-            <CardFront name={name.trim() || 'Service name'} price={parsedPrice} cycle={cycle} next={previewNext} />
+            <CardFront
+              name={name.trim() || 'Service name'}
+              price={parsedPrice}
+              cycle={cycle}
+              next={previewNext}
+            />
           </div>
         </div>
       </div>
 
       <label className="field">
         <span>Service name</span>
-        <input className="input" maxLength={40} autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          className="input"
+          maxLength={40}
+          autoComplete="off"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </label>
 
       <div className="row">
@@ -161,7 +208,13 @@ function SubForm({
           <div className="opts">
             {CYCLES.map((c) => (
               <label key={c}>
-                <input type="radio" name="cycle" value={c} checked={cycle === c} onChange={() => setCycle(c)} />
+                <input
+                  type="radio"
+                  name="cycle"
+                  value={c}
+                  checked={cycle === c}
+                  onChange={() => setCycle(c)}
+                />
                 <span>{CYCLE_LABEL[c]}</span>
               </label>
             ))}
@@ -172,11 +225,20 @@ function SubForm({
       <div className="row">
         <label className="field">
           <span>Next payment</span>
-          <input className="input" type="date" value={next} onChange={(e) => setNext(e.target.value)} />
+          <input
+            className="input"
+            type="date"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+          />
         </label>
         <label className="field">
           <span>Folder</span>
-          <select className="input" value={folderId} onChange={(e) => setFolderId(e.target.value)}>
+          <select
+            className="input"
+            value={folderId}
+            onChange={(e) => setFolderId(e.target.value)}
+          >
             {folders.length ? (
               folders.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -195,12 +257,21 @@ function SubForm({
           <span className="ds-label" id="dsLabel">
             Design
           </span>
-          <button className="shuffle" type="button" onClick={() => setSeed(newSeed())}>
+          <button
+            className="shuffle"
+            type="button"
+            onClick={() => setSeed(newSeed())}
+          >
             <IconShuffle />
             Shuffle
           </button>
         </div>
-        <div className="designs" role="radiogroup" aria-labelledby="dsLabel" ref={designsRef}>
+        <div
+          className="designs"
+          role="radiogroup"
+          aria-labelledby="dsLabel"
+          ref={designsRef}
+        >
           {DESIGNS.map((d) => (
             <label className="dz" key={d.id}>
               <input
@@ -223,7 +294,14 @@ function SubForm({
         <div className="sw">
           {CARD_COLORS.map(([c, label]) => (
             <label key={c}>
-              <input type="radio" name="color" value={c} aria-label={label} checked={color === c} onChange={() => setColor(c)} />
+              <input
+                type="radio"
+                name="color"
+                value={c}
+                aria-label={label}
+                checked={color === c}
+                onChange={() => setColor(c)}
+              />
               <span style={{ '--c': c } as CSSProperties} />
             </label>
           ))}
@@ -232,7 +310,13 @@ function SubForm({
 
       <label className="field">
         <span>Note (optional)</span>
-        <textarea className="input" rows={2} maxLength={120} value={memo} onChange={(e) => setMemo(e.target.value)} />
+        <textarea
+          className="input"
+          rows={2}
+          maxLength={120}
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+        />
       </label>
 
       {error && (
@@ -252,7 +336,15 @@ function SubForm({
   )
 }
 
-function DesignThumb({ design, color, seed }: { design: string; color: string; seed: number }) {
+function DesignThumb({
+  design,
+  color,
+  seed,
+}: {
+  design: string
+  color: string
+  seed: number
+}) {
   const url = useArt(design, color, seed, 's')
   return <span className="dz-thumb" style={artStyle(color, url)} />
 }

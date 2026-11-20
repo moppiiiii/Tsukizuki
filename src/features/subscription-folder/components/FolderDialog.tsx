@@ -1,5 +1,6 @@
 // フォルダの作成・編集ダイアログ
 import { useState, type FormEvent } from 'react'
+
 import { cardCount } from '../model/format'
 import type { Folder } from '../model/types'
 import { ModalDialog } from './ModalDialog'
@@ -20,10 +21,23 @@ type Props = {
   onDelete: () => void
 }
 
-export function FolderDialog({ open, request, onCancel, onSave, onDelete }: Props) {
+export function FolderDialog({
+  open,
+  request,
+  onCancel,
+  onSave,
+  onDelete,
+}: Props) {
   return (
     <ModalDialog open={open} onRequestClose={onCancel} labelledBy="folderTitle">
-      {request && <FolderForm key={request.token} request={request} onSave={onSave} onDelete={onDelete} />}
+      {request && (
+        <FolderForm
+          key={request.token}
+          request={request}
+          onSave={onSave}
+          onDelete={onDelete}
+        />
+      )}
     </ModalDialog>
   )
 }
@@ -66,7 +80,13 @@ function FolderForm({
       <h2 id="folderTitle">{folder ? 'Edit folder' : 'New folder'}</h2>
       <label className="field">
         <span>Folder name</span>
-        <input className="input" maxLength={20} autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          className="input"
+          maxLength={20}
+          autoComplete="off"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </label>
       {error && (
         <p className="err" role="alert">

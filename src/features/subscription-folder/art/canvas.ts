@@ -14,7 +14,12 @@ export function rgbHsl([r, g, b]: RGB): [number, number, number] {
   if (mx !== mn) {
     const d = mx - mn
     s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn)
-    h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4
+    h =
+      mx === r
+        ? (g - b) / d + (g < b ? 6 : 0)
+        : mx === g
+          ? (b - r) / d + 2
+          : (r - g) / d + 4
     h *= 60
   }
   return [h, s * 100, l * 100]
@@ -236,7 +241,13 @@ export function lowres(
 }
 
 /** 粒状ノイズ */
-export function grain(ctx: CanvasRenderingContext2D, w: number, h: number, amt: number, r: () => number) {
+export function grain(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  amt: number,
+  r: () => number,
+) {
   const img = ctx.getImageData(0, 0, w, h)
   const d = img.data
   for (let i = 0; i < d.length; i += 4) {
@@ -252,7 +263,12 @@ export function grain(ctx: CanvasRenderingContext2D, w: number, h: number, amt: 
  * マット仕上げ。描き終えた柄に重ね、ツヤのある見た目を抑える。
  * 彩度を 84% に落とし、明るさを 14〜241 の幅に収めて白く飛んだ反射や真っ黒をなくし、紙のような細かい粒を足す
  */
-export function matte(ctx: CanvasRenderingContext2D, w: number, h: number, r: () => number) {
+export function matte(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  r: () => number,
+) {
   const SAT = 0.84
   const LO = 14
   const HI = 241
@@ -274,15 +290,34 @@ export function matte(ctx: CanvasRenderingContext2D, w: number, h: number, r: ()
 }
 
 /** 周辺減光 */
-export function vignette(ctx: CanvasRenderingContext2D, w: number, h: number, a: number) {
-  const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75)
+export function vignette(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  a: number,
+) {
+  const g = ctx.createRadialGradient(
+    w / 2,
+    h / 2,
+    Math.min(w, h) * 0.3,
+    w / 2,
+    h / 2,
+    Math.max(w, h) * 0.75,
+  )
   g.addColorStop(0, 'rgba(0,0,0,0)')
   g.addColorStop(1, `rgba(0,0,0,${a})`)
   ctx.fillStyle = g
   ctx.fillRect(0, 0, w, h)
 }
 
-export function rrect(x: CanvasRenderingContext2D, X: number, Y: number, W: number, H: number, R: number) {
+export function rrect(
+  x: CanvasRenderingContext2D,
+  X: number,
+  Y: number,
+  W: number,
+  H: number,
+  R: number,
+) {
   x.beginPath()
   if (typeof x.roundRect === 'function') x.roundRect(X, Y, W, H, R)
   else x.rect(X, Y, W, H)
