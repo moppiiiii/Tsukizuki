@@ -58,6 +58,12 @@ export const Route = createRootRoute({
         rel: 'apple-touch-icon',
         href: '/apple-touch-icon.png',
       },
+      // ホーム画面にアプリとして追加したときの名前・開き方・色・アイコン。
+      // display: standalone で、アドレスバーを出さずにアプリとして開く
+      {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
     ],
   }),
   shellComponent: RootDocument,
