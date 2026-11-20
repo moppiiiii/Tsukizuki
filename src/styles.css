@@ -1,43 +1,83 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* 色・フォントのトークンとページの基本スタイル。
    claude.ai の artifact「サブスクフォルダ」から移植。ライトモード固定（OS がダークモードでも明るい配色で表示する）。 */
-:root{
-  --sans:"Geist","Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
-  --mono:"Geist Mono","SFMono-Regular","Menlo","Consolas","Zen Kaku Gothic New",monospace;
-  --canvas:#EBEBEB;
-  --ink:#141414;
-  --ink-2:#6B6B6B;
-  --line:rgba(0,0,0,.08);
-  --surface:rgba(250,250,250,.86);
-  --surface-line:rgba(255,255,255,.95);
-  --field:rgba(0,0,0,.04);
-  --field-line:rgba(0,0,0,.1);
-  --pill:rgba(255,255,255,.72);
-  --pill-line:rgba(0,0,0,.06);
-  --frost-1:rgba(255,255,255,.3);
-  --frost-2:rgba(255,255,255,.12);
-  --clear-back:rgba(255,255,255,.42);
-  --label-glow:rgba(255,255,255,.85);
-  --edge:rgba(255,255,255,.95);
-  --dim:rgba(235,235,235,.6);
-  --act-front:#262626; --act-back:#A8A8A8; --act-ink:#FFFFFF; --act-btn:#0C0C0C; --act-btn-ink:#FFFFFF;
-  --btn-bg:#141414; --btn-ink:#FFFFFF;
-  --danger:#B23A26;
-  --shadow-soft:0 1px 2px rgba(0,0,0,.06), 0 18px 34px -22px rgba(0,0,0,.4);
-  color-scheme:light;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
+:root {
+  --sans:
+    'Geist', 'Zen Kaku Gothic New', 'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
+  --mono:
+    'Geist Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'Zen Kaku Gothic New',
+    monospace;
+  --canvas: #ebebeb;
+  --ink: #141414;
+  --ink-2: #6b6b6b;
+  --line: rgba(0, 0, 0, 0.08);
+  --surface: rgba(250, 250, 250, 0.86);
+  --surface-line: rgba(255, 255, 255, 0.95);
+  --field: rgba(0, 0, 0, 0.04);
+  --field-line: rgba(0, 0, 0, 0.1);
+  --pill: rgba(255, 255, 255, 0.72);
+  --pill-line: rgba(0, 0, 0, 0.06);
+  --frost-1: rgba(255, 255, 255, 0.3);
+  --frost-2: rgba(255, 255, 255, 0.12);
+  --clear-back: rgba(255, 255, 255, 0.42);
+  --label-glow: rgba(255, 255, 255, 0.85);
+  --edge: rgba(255, 255, 255, 0.95);
+  --dim: rgba(235, 235, 235, 0.6);
+  --act-front: #262626;
+  --act-back: #a8a8a8;
+  --act-ink: #ffffff;
+  --act-btn: #0c0c0c;
+  --act-btn-ink: #ffffff;
+  --btn-bg: #141414;
+  --btn-ink: #ffffff;
+  --danger: #b23a26;
+  --shadow-soft:
+    0 1px 2px rgba(0, 0, 0, 0.06), 0 18px 34px -22px rgba(0, 0, 0, 0.4);
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-html{ scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%; }
-html.locked{ overflow:hidden; }
-*,*::before,*::after{ box-sizing:border-box; }
-body{ margin:0; background:radial-gradient(120% 90% at 50% 40%, #F7F7F7 0%, var(--canvas) 64%) fixed, var(--canvas); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased; }
-button{ font:inherit; color:inherit; }
-:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
-fieldset{ border:0; padding:0; margin:0; min-width:0; }
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  -webkit-text-size-adjust: 100%;
+}
+html.locked {
+  overflow: hidden;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #f7f7f7 0%, var(--canvas) 64%) fixed,
+    var(--canvas);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
 
 html,
 body,

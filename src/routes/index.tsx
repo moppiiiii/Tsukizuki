@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+
 import { SubscriptionFolderApp } from '../features/subscription-folder/SubscriptionFolderApp'
 
 export const Route = createFileRoute('/')({

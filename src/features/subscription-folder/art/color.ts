@@ -21,7 +21,9 @@ const DARK_L = lum(DARK_INK)
 /** 背景色の上に載せる文字色として、白と黒のどちらがコントラストを取れるか */
 export function inkFor(hex: string): '#FFFFFF' | typeof DARK_INK {
   const L = lum(hex)
-  return 1.05 / (L + 0.05) >= (L + 0.05) / (DARK_L + 0.05) ? '#FFFFFF' : DARK_INK
+  return 1.05 / (L + 0.05) >= (L + 0.05) / (DARK_L + 0.05)
+    ? '#FFFFFF'
+    : DARK_INK
 }
 
 /** t > 0 で白へ、t < 0 で黒へ寄せる */

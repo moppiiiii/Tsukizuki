@@ -33,14 +33,23 @@ export const FOLDER_COLORS: readonly string[] = [
 export const UNSORTED = { name: 'Unsorted', color: '#4A4E57' } as const
 
 /** 候補のうち、使われている回数が最も少ないもの（色や柄がかぶりにくいように選ぶ） */
-export function leastUsed(candidates: readonly string[], used: readonly string[]): string {
+export function leastUsed(
+  candidates: readonly string[],
+  used: readonly string[],
+): string {
   const count = new Map(candidates.map((c) => [c, 0]))
   used.forEach((c) => {
     const n = count.get(c)
     if (n !== undefined) count.set(c, n + 1)
   })
-  return [...candidates].sort((a, b) => (count.get(a) ?? 0) - (count.get(b) ?? 0))[0]
+  return [...candidates].sort(
+    (a, b) => (count.get(a) ?? 0) - (count.get(b) ?? 0),
+  )[0]
 }
 
-export const CYCLE_LABEL: Record<Cycle, string> = { month: 'Monthly', year: 'Yearly', week: 'Weekly' }
+export const CYCLE_LABEL: Record<Cycle, string> = {
+  month: 'Monthly',
+  year: 'Yearly',
+  week: 'Weekly',
+}
 export const CYCLES: readonly Cycle[] = ['month', 'year', 'week']

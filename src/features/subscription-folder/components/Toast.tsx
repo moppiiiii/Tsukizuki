@@ -1,5 +1,12 @@
 // 画面下に出る通知。削除のあとは「元に戻す」ボタンを付ける。6 秒で消える
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
+
 import { prefersReducedMotion } from '../dom'
 
 export type ToastMessage = {
@@ -27,9 +34,15 @@ export function Toast({ message, isBusy }: Props) {
       done()
       return
     }
-    el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }).finished.then(() => {
-      if (token === current.current) done()
-    }, () => {})
+    el.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 160,
+      fill: 'forwards',
+    }).finished.then(
+      () => {
+        if (token === current.current) done()
+      },
+      () => {},
+    )
   }, [])
 
   useEffect(() => {

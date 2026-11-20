@@ -1,5 +1,12 @@
 // フォルダの絵（背面・のぞいているカード・半透明の前面・ラベル）と、一覧に並ぶフォルダ
-import { useRef, useState, type CSSProperties, type PointerEvent, type Ref } from 'react'
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+  type Ref,
+} from 'react'
+
 import { artStyle } from '../art/cardStyle'
 import { useArt } from '../art/useArt'
 import { canTilt } from '../dom'
@@ -7,8 +14,10 @@ import { cardCount, monthlyOf, yen } from '../model/format'
 import type { Folder, Sub } from '../model/types'
 import { IconDots } from './icons'
 
-const BACK_EDGE_D = 'M0.6 42Q0.6 30.6 12 30.6L104 30.6C116 30.6 118 12.6 132 12.6L188 12.6Q199.4 12.6 199.4 24'
-const EDGE_D = 'M0.6 70Q0.6 58.6 12 58.6L64 58.6C78 58.6 82 74.6 96 74.6L188 74.6Q199.4 74.6 199.4 86'
+const BACK_EDGE_D =
+  'M0.6 42Q0.6 30.6 12 30.6L104 30.6C116 30.6 118 12.6 132 12.6L188 12.6Q199.4 12.6 199.4 24'
+const EDGE_D =
+  'M0.6 70Q0.6 58.6 12 58.6L64 58.6C78 58.6 82 74.6 96 74.6L188 74.6Q199.4 74.6 199.4 86'
 
 /** フォルダからのぞくカード 3 枚の位置（% と回転角） */
 const PEEK = [
@@ -53,7 +62,11 @@ export function FolderBody({ name, subs, peekHidden, bodyRef }: BodyProps) {
       <span className="f-shadow" />
       <span className="f-back" />
       <span className="f-back-act" />
-      <svg className="f-edge back-edge" viewBox="0 0 200 150" preserveAspectRatio="none">
+      <svg
+        className="f-edge back-edge"
+        viewBox="0 0 200 150"
+        preserveAspectRatio="none"
+      >
         <path d={BACK_EDGE_D} />
       </svg>
       <span className="f-peek" style={peekHidden ? { opacity: 0 } : undefined}>
@@ -84,7 +97,14 @@ type TileProps = {
   onEdit: () => void
 }
 
-export function FolderTile({ folder, subs, hidden, tileRef, onOpen, onEdit }: TileProps) {
+export function FolderTile({
+  folder,
+  subs,
+  hidden,
+  tileRef,
+  onOpen,
+  onEdit,
+}: TileProps) {
   const bodyRef = useRef<HTMLDivElement>(null)
   const [tilt] = useState(canTilt)
   const m = monthlyTotal(subs)
@@ -115,13 +135,28 @@ export function FolderTile({ folder, subs, hidden, tileRef, onOpen, onEdit }: Ti
     <div
       className="folder"
       ref={tileRef}
-      style={{ '--fc': folder.color, visibility: hidden ? 'hidden' : undefined } as CSSProperties}
+      style={
+        {
+          '--fc': folder.color,
+          visibility: hidden ? 'hidden' : undefined,
+        } as CSSProperties
+      }
       onPointerMove={tilt ? onPointerMove : undefined}
       onPointerLeave={tilt ? onPointerLeave : undefined}
     >
-      <button className="f-hit" type="button" aria-label={label} onClick={onOpen} />
+      <button
+        className="f-hit"
+        type="button"
+        aria-label={label}
+        onClick={onOpen}
+      />
       <FolderBody name={folder.name} subs={subs} bodyRef={bodyRef} />
-      <button className="f-more" type="button" aria-label={`Edit ${folder.name}`} onClick={onEdit}>
+      <button
+        className="f-more"
+        type="button"
+        aria-label={`Edit ${folder.name}`}
+        onClick={onEdit}
+      >
         <IconDots />
       </button>
     </div>

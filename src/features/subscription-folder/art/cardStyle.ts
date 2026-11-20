@@ -1,5 +1,6 @@
 // カードの配色（文字色・影・下地）と背景画像のスタイル
 import type { CSSProperties } from 'react'
+
 import { mixHex } from './color'
 import { toneOf } from './designs'
 
@@ -34,7 +35,11 @@ export function cardVars(color: string, design: string): CSSProperties {
  * 柄の背景スタイル。柄が描けるまでは色のグラデーションを出す。
  * veil を渡すと柄の上に半透明の膜を重ねる（カード裏面の文字を読みやすくするため）。
  */
-export function artStyle(color: string, url: string, veil?: Tone): CSSProperties {
+export function artStyle(
+  color: string,
+  url: string,
+  veil?: Tone,
+): CSSProperties {
   if (!url) {
     return {
       backgroundColor: color,

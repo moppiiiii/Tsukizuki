@@ -1,5 +1,6 @@
 // <dialog> をモーダルで開閉する。開くときと閉じるときにフェードとスライドをつける
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+
 import { dialogCloseMs, useLatest } from '../dom'
 
 type Props = {
@@ -10,7 +11,12 @@ type Props = {
   children: ReactNode
 }
 
-export function ModalDialog({ open, onRequestClose, labelledBy, children }: Props) {
+export function ModalDialog({
+  open,
+  onRequestClose,
+  labelledBy,
+  children,
+}: Props) {
   const ref = useRef<HTMLDialogElement>(null)
   const [shown, setShown] = useState(false)
   const close = useLatest(onRequestClose)

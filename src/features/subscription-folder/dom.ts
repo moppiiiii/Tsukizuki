@@ -2,17 +2,21 @@
 import { useLayoutEffect, useRef } from 'react'
 
 export const prefersReducedMotion = () =>
-  typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+  typeof matchMedia === 'function' &&
+  matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** マウス操作の端末で、フォルダをポインタに合わせて傾けてよいか */
-export const canTilt = () => !prefersReducedMotion() && matchMedia('(hover: hover) and (pointer: fine)').matches
+export const canTilt = () =>
+  !prefersReducedMotion() &&
+  matchMedia('(hover: hover) and (pointer: fine)').matches
 
 export const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** ダイアログを閉じるアニメーションの長さ */
 export const dialogCloseMs = () => (prefersReducedMotion() ? 0 : 190)
 
-export const cx = (...names: Array<string | false | null | undefined>) => names.filter(Boolean).join(' ')
+export const cx = (...names: Array<string | false | null | undefined>) =>
+  names.filter(Boolean).join(' ')
 
 /** 直近の値を、イベントリスナーなど長生きする関数から読むための ref */
 export function useLatest<T>(value: T) {
