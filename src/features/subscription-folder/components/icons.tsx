@@ -20,6 +20,18 @@ export const IconX = () => (
   </svg>
 )
 
+export const IconInfo = () => (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="4.2" r="1.25" fill="currentColor" />
+    <path
+      d="M8 7.3v5"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+    />
+  </svg>
+)
+
 export const IconDots = () => (
   <svg viewBox="0 0 16 16" aria-hidden="true">
     <circle cx="3.5" cy="8" r="1.5" fill="currentColor" />

@@ -10,6 +10,7 @@ import {
   type FolderDialogRequest,
 } from './components/FolderDialog'
 import { FolderTile } from './components/FolderGraphic'
+import { StorageInfo } from './components/StorageInfo'
 import {
   SubDialog,
   type SubDialogRequest,
@@ -294,6 +295,8 @@ export function SubscriptionFolderApp() {
       {/* 画面下中央に並ぶ 2 つのボタン：支払いの合計（¥）とフォルダの作成（＋） */}
       <SummaryFab subs={data.subs} hidden={!!openId} />
       <AddFolderFab hidden={!!openId} onClick={() => openFolderDialog(null)} />
+      {/* 画面右上の「i」：データの保存先の説明 */}
+      <StorageInfo hidden={!!openId} />
 
       {shownStage && stageBox && (
         <FolderStage
