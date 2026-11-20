@@ -16,12 +16,12 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1, viewport-fit=cover',
       },
       {
-        title: 'Subscription Folders',
+        title: 'Tsukizuki',
       },
       {
         name: 'description',
         content:
-          'Sort your subscriptions into folders and see what you pay each month at a glance.',
+          'Sort your subscriptions into folders and see what you pay each month. Your data stays in this browser.',
       },
     ],
     links: [
@@ -38,6 +38,18 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      // 黒い地に、フォルダからカードがのぞく絵。ICO には 16・32・48px の画像が入っている。
+      // 白いフォルダは黒い地の上にあるので、明るいタブでも暗いタブでも見える
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+        sizes: '16x16 32x32 48x48',
+      },
+      // iPhone は透明な部分を黒で埋めるので、こちらは隅まで黒く塗った四角い絵にしている
+      {
+        rel: 'apple-touch-icon',
+        href: '/apple-touch-icon.png',
       },
     ],
   }),
