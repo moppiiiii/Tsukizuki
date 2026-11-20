@@ -30,7 +30,6 @@ If you prefer not to use Tailwind CSS:
 3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
 4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
 
-
 ## Deploy to Cloudflare Workers
 
 This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) and `wrangler.jsonc`:
@@ -43,7 +42,22 @@ For production env vars, run `wrangler secret put MY_VAR` for each secret listed
 
 KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
 
+## CI/CD
 
+| Workflow             | When                               | What                                     |
+| -------------------- | ---------------------------------- | ---------------------------------------- |
+| PR check             | Every pull request                 | Lint, format, typecheck and build        |
+| Deploy to Cloudflare | Every push to `main`               | Runs PR check, then deploys if it passes |
+| Verify actions.lock  | Pull requests and pushes to `main` | Checks the pinned action versions        |
+
+Deploying needs two repository secrets: `CLOUDFLARE_API_TOKEN` (made from the "Edit Cloudflare
+Workers" template) and `CLOUDFLARE_ACCOUNT_ID`.
+
+The app is served only at its custom domain, attached to the `tsukizuki` Worker in the Cloudflare
+dashboard. The `workers.dev` address is turned off in `wrangler.jsonc`.
+
+Every action is pinned to a commit in `.github/workflows/actions.lock`. After changing any `uses:`,
+run [`gh actions-lock`](https://github.com/github/gh-actions-lock) and commit the lockfile with it.
 
 ## Routing
 
@@ -62,7 +76,7 @@ Now that you have two routes you can use a `Link` component to navigate between 
 To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
 
 ```tsx
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 ```
 
 Then anywhere in your JSX you can use it like so:
@@ -130,11 +144,11 @@ const getServerTime = createServerFn({
 // Use in a component
 function MyComponent() {
   const [time, setTime] = useState('')
-  
+
   useEffect(() => {
     getServerTime().then(setTime)
   }, [])
-  
+
   return <div>Server time: {time}</div>
 }
 ```
@@ -186,8 +200,6 @@ function PeopleComponent() {
 ```
 
 Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-
 
 # Learn More
 
