@@ -55,14 +55,26 @@ html.locked {
 }
 body {
   margin: 0;
-  background:
-    radial-gradient(120% 90% at 50% 40%, #f7f7f7 0%, var(--canvas) 64%) fixed,
-    var(--canvas);
+  /* 下地の色。ページの背景そのものは、下の body::before で塗る */
+  background: var(--canvas);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+}
+/* ページの背景。画面に固定した層として、画面全体に敷く。
+   Android の Chrome では、画面に固定した要素は画面下のジェスチャーバーの裏まで描かれるが、
+   body の背景はバーの裏まで塗られず、Chrome の色（ダークモードでは黒）が見えてしまうため */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #f7f7f7 0%, var(--canvas) 64%),
+    var(--canvas);
+  pointer-events: none;
 }
 button {
   font: inherit;
