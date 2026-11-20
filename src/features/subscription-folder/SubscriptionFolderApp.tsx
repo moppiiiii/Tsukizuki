@@ -1,14 +1,7 @@
 // サブスクフォルダの画面全体。画面にはフォルダだけを並べる。
 // データを持ち、フォルダの開閉・ダイアログ・通知をまとめる。
 // データはこの端末のブラウザ（localStorage）に保存する。初めて開いたときは空の状態で始まる。
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import { AddFolderFab } from './components/AddFolderFab'
@@ -85,14 +78,17 @@ export function SubscriptionFolderApp() {
   const openFolder = openId
     ? data.folders.find((f) => f.id === openId)
     : undefined
-  const stageContent = openFolder
-    ? { folder: openFolder, subs: byFolder.get(openFolder.id) ?? EMPTY }
-    : null
-  const lastStage = useRef(stageContent)
-  useLayoutEffect(() => {
-    if (stageContent) lastStage.current = stageContent
-  })
-  const shownStage = stageContent ?? (openId ? lastStage.current : null)
+  const stageContent = useMemo(
+    () =>
+      openFolder
+        ? { folder: openFolder, subs: byFolder.get(openFolder.id) ?? EMPTY }
+        : null,
+    [openFolder, byFolder],
+  )
+  // 最後に出していた中身を、描画の途中で覚え直す
+  const [lastStage, setLastStage] = useState(stageContent)
+  if (stageContent && stageContent !== lastStage) setLastStage(stageContent)
+  const shownStage = stageContent ?? (openId ? lastStage : null)
 
   // ---- ダイアログと通知 ----
   const seq = useRef(0)

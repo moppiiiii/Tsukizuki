@@ -22,6 +22,9 @@ export function ModalDialog({
   const close = useLatest(onRequestClose)
   const isOpen = useLatest(open)
 
+  // 閉じるときは、描画の途中で .in を外して閉じるアニメーションを始める
+  if (!open && shown) setShown(false)
+
   useEffect(() => {
     const d = ref.current
     if (!d) return
@@ -37,7 +40,6 @@ export function ModalDialog({
         cancelAnimationFrame(r2)
       }
     }
-    setShown(false)
     if (!d.open) return
     const t = setTimeout(() => {
       if (d.open) d.close()
@@ -65,6 +67,7 @@ export function ModalDialog({
   }, [close, isOpen])
 
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- 背景のクリックで閉じるための処理。キーボードでは Esc（cancel イベント）と data-close のボタンで閉じられる
     <dialog
       ref={ref}
       className={shown ? 'in' : undefined}

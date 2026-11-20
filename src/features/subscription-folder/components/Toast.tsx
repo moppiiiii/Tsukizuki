@@ -23,15 +23,22 @@ type Props = {
 
 export function Toast({ message, isBusy }: Props) {
   const ref = useRef<HTMLDivElement>(null)
-  const [shown, setShown] = useState<ToastMessage | null>(null)
+  const [shown, setShown] = useState<ToastMessage | null>(message)
   const current = useRef(0)
+
+  // 新しい通知が来たら、描画の途中で表示中の通知を差し替える
+  const [prevMessage, setPrevMessage] = useState(message)
+  if (message !== prevMessage) {
+    setPrevMessage(message)
+    if (message) setShown(message)
+  }
 
   const hide = useCallback((token: number) => {
     if (token !== current.current) return
     const el = ref.current
-    const done = () => setShown((s) => (s && s.token === token ? null : s))
+    const remove = () => setShown((s) => (s && s.token === token ? null : s))
     if (!el || prefersReducedMotion()) {
-      done()
+      remove()
       return
     }
     el.animate([{ opacity: 1 }, { opacity: 0 }], {
@@ -39,7 +46,7 @@ export function Toast({ message, isBusy }: Props) {
       fill: 'forwards',
     }).finished.then(
       () => {
-        if (token === current.current) done()
+        if (token === current.current) remove()
       },
       () => {},
     )
@@ -48,7 +55,6 @@ export function Toast({ message, isBusy }: Props) {
   useEffect(() => {
     if (!message) return
     current.current = message.token
-    setShown(message)
     const t = setTimeout(() => hide(message.token), 6000)
     return () => clearTimeout(t)
   }, [message, hide])

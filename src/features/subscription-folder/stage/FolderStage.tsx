@@ -420,6 +420,7 @@ export function FolderStage(props: Props) {
 
   return (
     <div className="stage" ref={stageRef}>
+      {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 背景のクリックで閉じるための処理。キーボードでは Esc で閉じられる（上の keydown の処理） */}
       <div
         className={cx('dim', focus && 'veil')}
         onClick={(e) => {
@@ -535,6 +536,7 @@ function FanCard({
     : posStyle(rest, lifted ? 300 : z)
 
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 中のボタン（表面と、裏面の Back・Edit・Delete）から伝わるクリックを受ける。キーボードではそのボタンで操作できる
     <div
       className={cx('fcard', focus && 'focused', flipped && 'flipped')}
       ref={cardRef}

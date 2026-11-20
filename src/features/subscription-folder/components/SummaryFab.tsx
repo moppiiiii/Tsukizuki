@@ -41,10 +41,17 @@ export function SummaryFab({ subs, hidden }: Props) {
   }
   useEffect(() => () => clearTimeout(hoverTimer.current), [])
 
+  // フォルダを開いて隠れるときは、描画の途中でパネルを閉じた状態に戻す
+  const [wasHidden, setWasHidden] = useState(hidden)
+  if (hidden !== wasHidden) {
+    setWasHidden(hidden)
+    if (hidden) {
+      setHover(false)
+      setPinned(false)
+    }
+  }
   useEffect(() => {
-    if (!hidden) return
-    leave()
-    setPinned(false)
+    if (hidden) clearTimeout(hoverTimer.current)
   }, [hidden])
 
   // 開いたままのときは、外側のタップか Esc で閉じる
@@ -138,11 +145,9 @@ export function SummaryFab({ subs, hidden }: Props) {
 /** 開いたときに 0 から目標の金額まで数え上げる */
 function useCountUp(target: number, run: boolean): number {
   const [value, setValue] = useState(target)
+  const animate = run && !prefersReducedMotion()
   useEffect(() => {
-    if (!run || prefersReducedMotion()) {
-      setValue(target)
-      return
-    }
+    if (!animate) return
     // パネルが広がり始めてから数え始める
     const start = performance.now() + 120
     const dur = 720
@@ -154,8 +159,9 @@ function useCountUp(target: number, run: boolean): number {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [target, run])
-  return value
+  }, [target, animate])
+  // 数え上げないときは、目標の金額をそのまま出す
+  return animate ? value : target
 }
 
 /** 次に支払うサブスク。同じ日に複数あれば「+◯ more」とまとめる */
