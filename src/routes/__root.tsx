@@ -23,6 +23,13 @@ export const Route = createRootRoute({
         content:
           'Sort your subscriptions into folders and see what you pay each month. Your data stays in this browser.',
       },
+      // ブラウザにページの地の色（styles.css の --canvas と同じ色）を伝える。
+      // Android の Chrome では、画面上部のアドレスバーがこの色になる。
+      // 画面下のバー（ジェスチャーバー）にも効くかは、Chrome の公式説明に書かれていない
+      {
+        name: 'theme-color',
+        content: '#EBEBEB',
+      },
     ],
     links: [
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
