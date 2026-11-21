@@ -47,6 +47,43 @@ export function ModalDialog({
     return () => clearTimeout(t)
   }, [open])
 
+  // スマホでキーボードが出ても、ダイアログを画面の見えている範囲（キーボードの上）に収める。
+  // キーボードは「見えている範囲」（visualViewport）だけを縮め、ダイアログの位置の基準になる
+  // 画面全体の高さは変えないので、そのままだとダイアログの下の方がキーボードの裏に隠れる
+  useEffect(() => {
+    const d = ref.current
+    const vv = window.visualViewport
+    if (!open || !d || !vv) return
+    const fit = (e?: Event) => {
+      // ピンチで拡大している間は合わせない。拡大した範囲にダイアログが縮んでしまうため
+      const zoomed = Math.abs(vv.scale - 1) > 0.01
+      const top = zoomed ? 0 : vv.offsetTop
+      const bottom = zoomed ? 0 : Math.max(0, innerHeight - vv.height - top)
+      d.style.setProperty('--vv-top', `${top}px`)
+      d.style.setProperty('--vv-bottom', `${bottom}px`)
+      d.style.setProperty('--vv-h', `${zoomed ? innerHeight : vv.height}px`)
+      d.toggleAttribute('data-kb', bottom > 1)
+      // 見えている範囲が縮んだときは、入力中の欄がダイアログの中で見える位置までスクロールする
+      if (e?.type !== 'resize') return
+      const el = document.activeElement
+      if (!(el instanceof HTMLElement) || !d.contains(el)) return
+      if (!el.matches('input, textarea, select')) return
+      const r = el.getBoundingClientRect()
+      const box = d.getBoundingClientRect()
+      const pad = 16
+      if (r.bottom > box.bottom - pad)
+        d.scrollTop += r.bottom - box.bottom + pad
+      else if (r.top < box.top + pad) d.scrollTop -= box.top + pad - r.top
+    }
+    fit()
+    vv.addEventListener('resize', fit)
+    vv.addEventListener('scroll', fit)
+    return () => {
+      vv.removeEventListener('resize', fit)
+      vv.removeEventListener('scroll', fit)
+    }
+  }, [open])
+
   useEffect(() => {
     const d = ref.current
     if (!d) return
