@@ -432,6 +432,17 @@
     inset 0 0 0 1px rgba(0, 0, 0, 0.12),
     0 1px 2px rgba(0, 0, 0, 0.14),
     0 16px 28px -16px rgba(0, 0, 0, 0.5);
+  /* iPhone の Safari では backface-visibility: hidden が効かず、背を向けた面が左右反転して透けることがある。
+     そこで、回転が 90° を過ぎた時点で、背を向けた面を visibility で消す。
+     0.11 秒は、.fc-inner の回転の速度の曲線（cubic-bezier(0.3, 1.2, 0.45, 1)・0.75 秒）が 90° を通る時刻 */
+  transition: visibility 0s linear 0.11s;
+}
+.back,
+.fcard.flipped .front {
+  visibility: hidden;
+}
+.fcard.flipped .back {
+  visibility: visible;
 }
 .front {
   display: flex;
@@ -1306,6 +1317,7 @@ textarea.input {
   .fcard,
   .fslot,
   .fc-inner,
+  .face,
   .f-body,
   .f-peek i,
   .f-dark,
