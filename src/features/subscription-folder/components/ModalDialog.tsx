@@ -62,7 +62,6 @@ export function ModalDialog({
       d.style.setProperty('--vv-top', `${top}px`)
       d.style.setProperty('--vv-bottom', `${bottom}px`)
       d.style.setProperty('--vv-h', `${zoomed ? innerHeight : vv.height}px`)
-      d.toggleAttribute('data-kb', bottom > 1)
       // 見えている範囲が縮んだときは、入力中の欄がダイアログの中で見える位置までスクロールする
       if (e?.type !== 'resize') return
       const el = document.activeElement
